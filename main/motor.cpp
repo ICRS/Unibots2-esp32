@@ -52,6 +52,17 @@ void stop_right_motor_driver(){
 
 
 
+void enable_disable_left_motor_driver(bool enable){
+  digitalWrite(LEFT_MOTOR_DRIVER_SLEEP, enable);
+}
+
+void enable_disable_right_motor_driver(bool enable){
+  digitalWrite(RIGHT_MOTOR_DRIVER_SLEEP, enable);
+}
+
+
+
+
 void enable_left_motor_driver(){
   digitalWrite(LEFT_MOTOR_DRIVER_SLEEP, HIGH);
 }
