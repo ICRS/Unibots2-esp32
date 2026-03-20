@@ -6,19 +6,22 @@
 
 
 static constexpr unsigned int LEFT_MOTOR_DRIVER_IN1 = 5;
-static constexpr unsigned int LEFT_MOTOR_DRIVER_IN2 = 17;
+static constexpr unsigned int LEFT_MOTOR_DRIVER_IN2 = 16;
 static constexpr unsigned int LEFT_MOTOR_DRIVER_FAULT = 2;
 static constexpr unsigned int LEFT_MOTOR_DRIVER_SLEEP = 2;
-static constexpr unsigned int LEFT_MOTOR_DRIVER_IN3 = 16;
-static constexpr unsigned int LEFT_MOTOR_DRIVER_IN4 = 4;
+static constexpr unsigned int LEFT_MOTOR_DRIVER_IN3 = 4;
+static constexpr unsigned int LEFT_MOTOR_DRIVER_IN4 = 2;
 
+/*
 
-static constexpr unsigned int RIGHT_MOTOR_DRIVER_IN1 = 14;
+*/
+
+static constexpr unsigned int RIGHT_MOTOR_DRIVER_IN1 = 14;    
 static constexpr unsigned int RIGHT_MOTOR_DRIVER_IN2 = 27;
 static constexpr unsigned int RIGHT_MOTOR_DRIVER_FAULT = 16;
 static constexpr unsigned int RIGHT_MOTOR_DRIVER_SLEEP = 4;
-static constexpr unsigned int RIGHT_MOTOR_DRIVER_IN3 = 26;
-static constexpr unsigned int RIGHT_MOTOR_DRIVER_IN4 = 25;
+static constexpr unsigned int RIGHT_MOTOR_DRIVER_IN3 = 25;
+static constexpr unsigned int RIGHT_MOTOR_DRIVER_IN4 = 33;
 
 void init_left_motor_driver(){
   pinMode(LEFT_MOTOR_DRIVER_IN1,    OUTPUT);
@@ -104,6 +107,7 @@ void drive_left_motor_driver(unsigned int in1, unsigned int in2, unsigned int in
   analogWrite(LEFT_MOTOR_DRIVER_IN2, in2);
   analogWrite(LEFT_MOTOR_DRIVER_IN3, in3);
   analogWrite(LEFT_MOTOR_DRIVER_IN4, in4);
+  Serial.printf("left %d %d %d %d\n", in1, in2, in3, in4);
 }
 
 void drive_left_motor_driver(unsigned int in_low, unsigned int in_high){
@@ -119,6 +123,7 @@ void drive_right_motor_driver(unsigned int in1, unsigned int in2, unsigned int i
   analogWrite(RIGHT_MOTOR_DRIVER_IN2, in2);
   analogWrite(RIGHT_MOTOR_DRIVER_IN3, in3);
   analogWrite(RIGHT_MOTOR_DRIVER_IN4, in4);
+  Serial.printf("right %d %d %d %d\n", in1, in2, in3, in4);
 }
 
 void drive_right_motor_driver(unsigned int in_low, unsigned int in_high){

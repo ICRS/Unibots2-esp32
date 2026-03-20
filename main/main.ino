@@ -73,7 +73,7 @@ void i2c_on_request(){
 }
 #endif
 
-void setup() {
+void slave_init(){
   Wire.begin(I2C_SLAVE_ADDRESS, I2C_SDA, I2C_SCL, I2C_FREQUENCY);
   Wire.onReceive(i2c_on_recieve);
 #if MOTOR_DRIVER_FAULT_USED
@@ -81,5 +81,11 @@ void setup() {
 #endif
 }
 
+void setup() {
+  motor_test_setup();
+}
 
-void loop() {}
+
+void loop() {
+  motor_test_loop();
+}
