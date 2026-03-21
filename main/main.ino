@@ -1,6 +1,5 @@
 #include "motor.hpp"
 #include "constants.hpp"
-#include "Wire.h"
 
 /*
 https://lastminuteengineers.com/drv8833-arduino-tutorial/
@@ -20,72 +19,88 @@ https://randomnerdtutorials.com/esp32-i2c-master-slave-arduino/
 https://docs.espressif.com/projects/arduino-esp32/en/latest/api/i2c.html
 */
 
-static constexpr unsigned int I2C_SDA = 18;
-static constexpr unsigned int I2C_SCL = 19;
-static constexpr unsigned long I2C_FREQUENCY = 100'000;
-static constexpr unsigned int I2C_SLAVE_ADDRESS = 0x08;
-static constexpr unsigned int DIRECTION_REVERSE = 0;
-static constexpr unsigned int DIRECTION_FORWARD = 1;
+static constexpr int TURN90_LEFT_TIME  = 1000;
+static constexpr int TURN90_RIGHT_TIME = 1000;
+static constexpr int TURN180_TIME = 2000;
 
-#if MOTOR_DRIVER_SLEEP_USED
-void on_single_byte_cmd(){
-  const unsigned char byte = Wire.read()
-  if (byte > 3) //this includes (unsigned char)-1 i.e. no data available
-    return;
-  const bool left_enable = byte & 0b10;
-  const bool right_enable = byte & 0b01;
-  enable_disable_left_motor_driver(left_enable);
-  enable_disable_right_motor_driver(right_enable);
-}
-#endif
+static_assert(TURN90_LEFT_TIME == TURN90_RIGHT_TIME);
 
-void on_triple_byte_cmd(){
-  const unsigned char direction = Wire.read();
-  const unsigned char left_speed = Wire.read();
-  const unsigned char right_speed = Wire.read();
-  if (direction > 3) //this includes (unsigned char)-1 i.e. no data available
-    return;
-  const bool left_direction = direction & 0b10;
-  const bool right_direction = direction & 0b01;
-  if (left_direction == DIRECTION_FORWARD)
-    drive_left_motor_driver(0, left_speed);
-  else
-    drive_left_motor_driver(left_speed, 0);
-  if (right_direction == DIRECTION_FORWARD)
-    drive_right_motor_driver(right_speed, 0);
-  else
-    drive_right_motor_driver(0, right_speed);
-}
-
-void i2c_on_recieve(int len){
-  switch (len){
-    #if MOTOR_DRIVER_SLEEP_USED
-    case 1: on_single_byte_cmd(); break;
-    #endif
-    case 3: on_triple_byte_cmd(); break;
-  }
-}
-
-#if MOTOR_DRIVER_FAULT_USED
-void i2c_on_request(){
-  const unsigned char byte = read_left_motor_driver_fault() << 1 | read_right_motor_driver_fault();
-  Wire.write(byte);
-}
-#endif
-
-void slave_init(){
-  Wire.begin(I2C_SLAVE_ADDRESS, I2C_SDA, I2C_SCL, I2C_FREQUENCY);
-  Wire.onReceive(i2c_on_recieve);
-#if MOTOR_DRIVER_FAULT_USED
-  Wire.onRequest(i2c_on_request);
-#endif
-}
+static constexpr unsigned int TIME_TO_LIVE_S = 180;
+static constexpr unsigned int FORWARD_TIME = 3000;
+static constexpr unsigned int PARK_TIME = 1000;
+static constexpr unsigned int RETURN_TIME = 20000;
+static constexpr unsigned int NUM_CORNERS = 4;
+static constexpr unsigned int SETUP_TIME = TURN90_LEFT_TIME + FORWARD_TIME / 2;
+static constexpr unsigned int FORWARD_SPEED = MAX_DUTY_CYCLE;
+static constexpr unsigned int TOTAL_LOOP_TIME = TIME_TO_LIVE_S - SETUP_TIME - RETURN_TIME;
+static constexpr unsigned int NUM_REPETITIONS = TOTAL_LOOP_TIME * 1000ul / (TURN90_LEFT_TIME + FORWARD_TIME);
+static constexpr unsigned int END_CORNER = NUM_REPETITIONS % 4;
 
 void setup() {
-  motor_test_setup();
+  init_left_motor_driver();
+  init_right_motor_driver();  
 }
 
+static void drive_forward(){
+  drive_forward(FORWARD_SPEED, FORWARD_TIME);
+}
+
+static void half_drive_forward(){
+  drive_forward(FORWARD_SPEED, FORWARD_TIME / 2);
+}
+
+static void park_reverse(){
+    drive_reverse(FORWARD_SPEED, PARK_TIME);
+}
+
+static void turn90_left(){
+  static constexpr int in = 255;
+  point_turn_left(in, TURN90_LEFT_TIME);
+}
+
+static void turn90_right(){
+  static constexpr int in = 255;
+  point_turn_right(in, TURN90_RIGHT_TIME);
+}
+
+static void turn180(){
+  static constexpr int in = 255;
+  point_turn_right(in, TURN180_TIME);
+}
 
 void loop() {
-  motor_test_loop();
+  
+  turn90_right();
+  half_drive_forward();
+
+  for (int i = 0; i < NUM_REPETITIONS; ++i){
+    turn90_left();
+    drive_forward();
+  }
+
+  if constexpr (END_CORNER == 0){
+    turn180();
+    half_drive_forward();
+    turn90_right();
+    park_reverse();
+  } else if constexpr (END_CORNER == 1){
+    turn180();
+    drive_forward();
+    turn90_right();
+    half_drive_forward();
+    turn90_right();
+    park_reverse();
+  } else if constexpr (END_CORNER == 2) {
+    turn90_left();
+    drive_forward();
+    turn90_left();
+    half_drive_forward();
+    turn90_left();
+    park_reverse();
+  } else if constexpr (END_CORNER == 3) {
+    turn90_left();
+    half_drive_forward();
+    turn90_left();
+    park_reverse();
+  }
 }
