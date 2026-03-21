@@ -5,12 +5,12 @@
 
 
 
-static constexpr unsigned int LEFT_MOTOR_DRIVER_IN1 = 5;
-static constexpr unsigned int LEFT_MOTOR_DRIVER_IN2 = 16;
+static constexpr unsigned int LEFT_MOTOR_DRIVER_IN1 = 16;
+static constexpr unsigned int LEFT_MOTOR_DRIVER_IN2 = 5;
 static constexpr unsigned int LEFT_MOTOR_DRIVER_FAULT = 2;
 static constexpr unsigned int LEFT_MOTOR_DRIVER_SLEEP = 2;
-static constexpr unsigned int LEFT_MOTOR_DRIVER_IN3 = 4;
-static constexpr unsigned int LEFT_MOTOR_DRIVER_IN4 = 2;
+static constexpr unsigned int LEFT_MOTOR_DRIVER_IN3 = 2;
+static constexpr unsigned int LEFT_MOTOR_DRIVER_IN4 = 4;
 
 /*
 
@@ -177,7 +177,7 @@ void drive_reverse(unsigned int in, unsigned int time){
   delay(time);
 }
 
-void stop_motor(){
+void stop(){
   stop_left_motor_driver();
   stop_right_motor_driver();
 }

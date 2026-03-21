@@ -1,9 +1,10 @@
 #include "control.hpp"
+#include "motor.hpp"
 
 void setup(){
   control_setup();
 }
 
 void loop(){
-  drive_forward();
+  control_loop();
 }

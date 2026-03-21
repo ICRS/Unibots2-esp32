@@ -49,14 +49,12 @@ void drive_forward(unsigned int in);
 void drive_forward(unsigned int in, unsigned int time);
 void drive_reverse(unsigned int in);
 void drive_reverse(unsigned int in, unsigned int time);
-void stop_motor();
+void stop();
 
 void point_turn_left(unsigned int in);
 void point_turn_left(unsigned int in, unsigned int time);
 void point_turn_right(unsigned int in);
 void point_turn_right(unsigned int in, unsigned int time);
-
-
 
 void motor_test_setup();
 void motor_test_loop();
