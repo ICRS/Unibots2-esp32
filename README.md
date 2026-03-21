@@ -10,6 +10,8 @@ ESP32 I2C Communication Protocal
 		- 0x11 - both speeds are in the foward direction
 	- Second Byte (Left Speed) - The unsigned 8 bit left motor speed
 	- Third Byte (Right Speed) - The unsigned 8 bit right motor speed
+
+The following elements of the protocal are currently disabled, but could be added in the future:
 - Motor Enable/Disable
 	- First Byte (enable or disable)
 		- 0x00 - left motor disable, right motor disable
