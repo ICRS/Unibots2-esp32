@@ -1,3 +1,4 @@
+#include <ESP32Servo.h>
 Servo myServo;
 #define SERVO_PIN 15
 
@@ -8,5 +9,15 @@ void init_servo(){
 }
 
 void drive_servo_up(){
-  
+  for (int pos = 0; pos <= 180; pos++) {
+    myServo.write(pos);
+    delay(10);
+  }
+}
+
+void drive_servo_down(){
+  for (int pos = 180; pos >= 0; pos--) {
+    myServo.write(pos);
+    delay(10);
+  }
 }
