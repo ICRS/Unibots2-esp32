@@ -1,7 +1,7 @@
 #include "control.hpp"
 
 void setup(){
-  setup_control();
+  control_setup();
 }
 
 void loop(){

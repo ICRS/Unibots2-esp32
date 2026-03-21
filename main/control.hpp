@@ -1,7 +1,7 @@
 #ifndef CONTROL_HPP
 #define CONTROL_HPP
 
-void setup_control();
+void control_setup();
 
 void control_loop();
 
